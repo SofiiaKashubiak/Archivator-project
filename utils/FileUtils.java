@@ -1,58 +1,27 @@
 package utils;
 
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.io.IOException;
-import java.nio.file.*;
 
 public class FileUtils {
-
-    public static boolean fileExists(String path) {
-        return Files.exists(Paths.get(path));
+    public static boolean fileExists(String filename) {
+        return Files.exists(Paths.get(filename));
     }
 
-
-    public static void addFile(String sourcePath, String destinationPath) throws IOException {
-        Path source = Paths.get(sourcePath);
-        Path destination = Paths.get(destinationPath);
-
-        if (!Files.exists(source)) {
-            throw new IOException("Source file does not exist: " + sourcePath);
+    public static void createTestFile(String filename) throws IOException {
+        if (!fileExists(filename)) {
+            String content = "This is an example file.";
+            Files.write(Paths.get(filename), content.getBytes());
         }
-
-        Files.copy(source, destination, StandardCopyOption.REPLACE_EXISTING);
     }
 
-
-    public static void deleteFile(String path) throws IOException {
-        Path filePath = Paths.get(path);
-
-        if (!Files.exists(filePath)) {
-            throw new IOException("File does not exist: " + path);
+    public static void deleteFile(String filename) throws IOException {
+        if (fileExists(filename)) {
+            Files.delete(Paths.get(filename));
+            System.out.println("File deleted: " + filename);
+        } else {
+            System.out.println("File not found: " + filename);
         }
-
-        Files.delete(filePath);
-    }
-
-
-    public static void copyFile(String sourcePath, String destinationPath) throws IOException {
-        Path source = Paths.get(sourcePath);
-        Path destination = Paths.get(destinationPath);
-
-        if (!Files.exists(source)) {
-            throw new IOException("Source file does not exist: " + sourcePath);
-        }
-
-        Files.copy(source, destination, StandardCopyOption.REPLACE_EXISTING);
-    }
-
-
-    public static long getFileSize(String path) throws IOException {
-        Path filePath = Paths.get(path);
-
-        if (!Files.exists(filePath)) {
-            throw new IOException("File does not exist: " + path);
-        }
-
-        return Files.size(filePath);
     }
 }
