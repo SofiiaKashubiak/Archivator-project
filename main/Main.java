@@ -1,5 +1,7 @@
 package main;
 
+import adapters.ArchiveAdapter;
+import adapters.ZipArchiveAdapter;
 import context.FileProcessorContext;
 import models.File;
 import strategy.ChecksumVerificationStrategy;
@@ -11,6 +13,7 @@ import java.io.IOException;
 public class Main {
     public static void main(String[] args) throws IOException {
         FileUtils.createTestFile("example.txt");
+        FileUtils.createTestFile("example2.txt");
 
         File file = new File();
         file.setFileName("example.txt");
@@ -24,5 +27,17 @@ public class Main {
         context.setStrategy(new FileDeletionStrategy());
         context.executeStrategy(file);
 
+        ArchiveAdapter zipAdapter = new ZipArchiveAdapter();
+
+        String[] filesToArchive = {"example2.txt"};
+        zipAdapter.createArchive("archive.zip", filesToArchive);
+
+        zipAdapter.extractArchive("archive.zip", "./output");
+
+        zipAdapter.addFile("archive.zip", "example.txt");
+
+        zipAdapter.deleteFile("archive.zip", "example2.txt");
+
+        System.out.println("Demo completed!");
     }
 }
