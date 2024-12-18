@@ -1,9 +1,8 @@
 package main;
 
-import adapters.ArchiveAdapter;
 import adapters.ZipArchiveAdapter;
-import context.FileProcessorContext;
-import factory.*;
+import facade.ArchiveFacade;
+import factory.ZipArchiveTesterFactory;
 import models.File;
 import strategy.ChecksumVerificationStrategy;
 import strategy.FileDeletionStrategy;
@@ -16,29 +15,32 @@ public class Main {
         FileUtils.createTestFile("example.txt");
         FileUtils.createTestFile("example2.txt");
 
+        ArchiveFacade facade = new ArchiveFacade(new ZipArchiveAdapter(), new ZipArchiveTesterFactory());
+
         File file = new File();
         file.setFileName("example.txt");
         file.setChecksum("e7cb632359a2be17c1008b50f9ec85691cd5d66834d5fe8f63ef65ceb06682ee");
 
-        FileProcessorContext context = new FileProcessorContext();
-        context.setStrategy(new ChecksumVerificationStrategy());
-        context.executeStrategy(file);
+        System.out.println("Verifying file checksum:");
+        facade.processFile(file, new ChecksumVerificationStrategy());
 
-        context.setStrategy(new FileDeletionStrategy());
-        context.executeStrategy(file);
+        System.out.println("\nDeleting file:");
+        facade.processFile(file, new FileDeletionStrategy());
 
-        ArchiveAdapter zipAdapter = new ZipArchiveAdapter();
-        String[] filesToArchive = {"example2.txt"};
-        zipAdapter.createArchive("archive.zip", filesToArchive);
+        System.out.println("\nCreating archive:");
+        facade.createArchive("archive.zip", new String[]{"example2.txt"});
 
-        zipAdapter.extractArchive("archive.zip", "./output");
-        zipAdapter.addFile("archive.zip", "example.txt");
-        zipAdapter.deleteFile("archive.zip", "example2.txt");
+        System.out.println("\nExtracting archive:");
+        facade.extractArchive("archive.zip", "./output");
+
+        System.out.println("\nAdding file to archive:");
+        facade.addFileToArchive("archive.zip", "example.txt");
+
+        System.out.println("\nDeleting file from archive:");
+        facade.deleteFileFromArchive("archive.zip", "example2.txt");
 
         System.out.println("\nTesting archive integrity:");
-
-        ArchiveTesterFactory testerFactory = new ZipArchiveTesterFactory();
-        testerFactory.test("archive.zip");
+        facade.testArchive("archive.zip");
 
         System.out.println("\nDemo completed!");
     }
