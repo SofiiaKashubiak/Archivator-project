@@ -3,6 +3,7 @@ package main;
 import adapters.ArchiveAdapter;
 import adapters.ZipArchiveAdapter;
 import context.FileProcessorContext;
+import factory.*;
 import models.File;
 import strategy.ChecksumVerificationStrategy;
 import strategy.FileDeletionStrategy;
@@ -20,7 +21,6 @@ public class Main {
         file.setChecksum("e7cb632359a2be17c1008b50f9ec85691cd5d66834d5fe8f63ef65ceb06682ee");
 
         FileProcessorContext context = new FileProcessorContext();
-
         context.setStrategy(new ChecksumVerificationStrategy());
         context.executeStrategy(file);
 
@@ -28,16 +28,18 @@ public class Main {
         context.executeStrategy(file);
 
         ArchiveAdapter zipAdapter = new ZipArchiveAdapter();
-
         String[] filesToArchive = {"example2.txt"};
         zipAdapter.createArchive("archive.zip", filesToArchive);
 
         zipAdapter.extractArchive("archive.zip", "./output");
-
         zipAdapter.addFile("archive.zip", "example.txt");
-
         zipAdapter.deleteFile("archive.zip", "example2.txt");
 
-        System.out.println("Demo completed!");
+        System.out.println("\nTesting archive integrity:");
+
+        ArchiveTesterFactory testerFactory = new ZipArchiveTesterFactory();
+        testerFactory.test("archive.zip");
+
+        System.out.println("\nDemo completed!");
     }
 }
