@@ -1,5 +1,7 @@
 package models;
 
+import visitor.Visitor;
+
 import java.util.Objects;
 
 public class File {
@@ -74,5 +76,9 @@ public class File {
     @Override
     public int hashCode() {
         return Objects.hash(id, fileName, size, checksum);
+    }
+
+    public void accept(Visitor visitor) {
+        visitor.visitFile(this);
     }
 }

@@ -1,5 +1,7 @@
 package models;
 
+import visitor.Visitor;
+
 import java.util.List;
 
 public class Archive {
@@ -56,5 +58,9 @@ public class Archive {
 
     public void setMetadata(ArchiveMetadata metadata) {
         this.metadata = metadata;
+    }
+
+    public void accept(Visitor visitor) {
+        visitor.visitArchive(this);
     }
 }

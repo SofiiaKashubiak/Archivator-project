@@ -1,5 +1,7 @@
 package models;
 
+import visitor.Visitor;
+
 import java.util.List;
 
 public class Folder {
@@ -29,5 +31,9 @@ public class Folder {
 
     public void setFiles(List<File> files) {
         this.files = files;
+    }
+
+    public void accept(Visitor visitor) {
+        visitor.visitFolder(this);
     }
 }
